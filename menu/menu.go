@@ -8,13 +8,14 @@ import (
 
 	"github.com/atotto/clipboard"
 	"github.com/getlantern/systray"
+	"github.com/tech-thinker/stikky/config"
 	"github.com/tech-thinker/stikky/res"
 	"github.com/tech-thinker/stikky/tasks"
 )
 
 func OnReady() {
-
-	tasks := tasks.NewTask()
+	cfg := config.NewAppConfig()
+	tasks := tasks.NewTask(cfg)
 	ctx := context.Background()
 
 	// Set the tray icon
@@ -41,6 +42,9 @@ func OnReady() {
 	mBase64 := systray.AddMenuItem("Base64", "")
 	mBase64Encode := mBase64.AddSubMenuItem("Encode", "")
 	mBase64Decode := mBase64.AddSubMenuItem("Decode", "")
+	mEncryption := systray.AddMenuItem("Encryption", "")
+	mEncryptionEncrypt := mEncryption.AddSubMenuItem("Encrypt", "")
+	mEncryptionDecrypt := mEncryption.AddSubMenuItem("Decrypt", "")
 	mUUIDGen := systray.AddMenuItem("Generate UUID", "")
 
 	mQuit := systray.AddMenuItem("Quit", "Quit the application")
@@ -75,6 +79,14 @@ func OnReady() {
 			case <-mBase64Decode.ClickedCh:
 				clip, _ := clipboard.ReadAll()
 				decoded, _ := tasks.Base64Decode(ctx, clip)
+				clipboard.WriteAll(decoded)
+			case <-mEncryptionEncrypt.ClickedCh:
+				clip, _ := clipboard.ReadAll()
+				encoded, _ := tasks.Encrypt(ctx, clip)
+				clipboard.WriteAll(encoded)
+			case <-mEncryptionDecrypt.ClickedCh:
+				clip, _ := clipboard.ReadAll()
+				decoded, _ := tasks.Decrypt(ctx, clip)
 				clipboard.WriteAll(decoded)
 			case <-mUUIDGen.ClickedCh:
 				uuid, _ := tasks.UUIDGenerate(ctx)

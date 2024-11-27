@@ -76,3 +76,37 @@ func Test_task_Base64Decode(t *testing.T) {
 		})
 	}
 }
+
+func Test_task_UUIDGenerate(t *testing.T) {
+	type args struct {
+		ctx context.Context
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    int
+		wantErr bool
+	}{
+		{
+			name: "test_uuid_generate",
+			args: args{
+				ctx: context.Background(),
+			},
+			want:    36, // length of string
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tr := &task{}
+			got, err := tr.UUIDGenerate(tt.args.ctx)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("task.UUIDGenerate() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if len(got) != tt.want {
+				t.Errorf("task.UUIDGenerate() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
