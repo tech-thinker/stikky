@@ -14,58 +14,67 @@ download:
 test:
 	go test -v ./...  -race -coverprofile=coverage.out -covermode=atomic
 
-run: build
-	./build/stikky
+run:
+	go run main.go
+
+run-ui:
+	go run main.go --ui
 
 build:
 	go build -ldflags="$(LDFLAGS)" -o build/stikky .
 
 # Create distribution packaging
-dist: pkg_macos pkg_windows
+dist: pkg-macos pkg-windows
 
 # Packaging MacOS
-pkg_macos: pkg_macos_amd64 # pkg_macos_arm64
+pkg-macos: pkg-macos_amd64 # pkg-macos_arm64
 
 # Build process for MacOS amd64
-build_macos_amd64:
+build-macos-amd64:
 	GOOS=darwin GOARCH=amd64 go build -ldflags="$(LDFLAGS) -H=darwin" -o build/macos/stikky .
 
-pkg_macos_amd64: build_macos_amd64
+pkg-macos_amd64: build-macos-amd64
 	mkdir -p build/macos/stikky.app/Contents/MacOS
 	mkdir -p build/macos/stikky.app/Contents/Resources
-	cp Info.plist build/macos/stikky.app/Contents/
+	cp res/pkg/macos/Info.plist build/macos/stikky.app/Contents/
 	cp build/macos/stikky build/macos/stikky.app/Contents/MacOS/
 	cp res/assets/icon.icns build/macos/stikky.app/Contents/Resources/
 	chmod +x build/macos/stikky.app
 	rm -rf build/macos/stikky
 	ln -s /Applications $(PWD)/build/macos/Applications
+	cp res/pkg/macos/VolumeIcon.icns build/macos/.VolumeIcon.icns
+	cp -r res/pkg/macos/background build/macos/.background
+	cp -r res/pkg/macos/fseventsd build/macos/.fseventsd
 	hdiutil create -volname "Stikky Installer" -srcfolder build/macos/ -ov -format UDZO build/Stikky_amd64.dmg
 	rm -rf build/macos
 
 
 # Build process for MacOS arm64
-build_macos_arm64:
+build-macos-arm64:
 	GOOS=darwin GOARCH=arm64 go build -ldflags="$(LDFLAGS) -H=darwin" -o build/macos/stikky .
 
-pkg_macos_arm64: build_macos_arm64
+pkg-macos_arm64: build-macos-arm64
 	mkdir -p build/macos/stikky.app/Contents/MacOS
 	mkdir -p build/macos/stikky.app/Contents/Resources
-	cp Info.plist build/macos/stikky.app/Contents/
+	cp res/pkg/macos/Info.plist build/macos/stikky.app/Contents/
 	cp build/macos/stikky build/macos/stikky.app/Contents/MacOS/
 	cp res/assets/icon.icns build/macos/stikky.app/Contents/Resources/
 	chmod +x build/macos/stikky.app
 	rm -rf build/macos/stikky
 	ln -s /Applications $(PWD)/build/macos/Applications
+	cp res/pkg/macos/VolumeIcon.icns build/macos/.VolumeIcon.icns
+	cp -r res/pkg/macos/background build/macos/.background
+	cp -r res/pkg/macos/fseventsd build/macos/.fseventsd
 	hdiutil create -volname "Stikky Installer" -srcfolder build/macos/ -ov -format UDZO build/Stikky_arm64.dmg
 	rm -rf build/macos
 
 # Packaging Windows
-build_windows:
+build-windows:
 	GOOS=windows go build -ldflags="$(LDFLAGS) -H=windowsgui" -o build/stikky.exe .
 
 # Packaging windows amd64
-pkg_windows: build_windows
-	tar -zcvf build/stikky-windows.tar.gz build/stikky.exe
+pkg-windows: build-windows
+	zip -r build/stikky-windows.zip build/stikky.exe
 	rm -rf build/stikky.exe
 
 # Cleaning up
@@ -73,7 +82,7 @@ clean:
 	rm -rf stikky build
 
 # Developer dependent work
-generate_icns:
+generate-icns:
 	mkdir -p res/assets/icon.iconset
 	cp res/assets/icon.png res/assets/icon.iconset/icon_512x512.png
 	magick res/assets/icon.png -resize 16x16 res/assets/icon.iconset/icon_16x16.png

@@ -2,8 +2,10 @@ package menu
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
+	"os/exec"
 	"runtime"
 
 	"github.com/atotto/clipboard"
@@ -46,6 +48,8 @@ func OnReady() {
 	mEncryptionEncrypt := mEncryption.AddSubMenuItem("Encrypt", "")
 	mEncryptionDecrypt := mEncryption.AddSubMenuItem("Decrypt", "")
 	mUUIDGen := systray.AddMenuItem("Generate UUID", "")
+
+	mOpen := systray.AddMenuItem("Open", "Open the application")
 
 	mQuit := systray.AddMenuItem("Quit", "Quit the application")
 
@@ -91,6 +95,12 @@ func OnReady() {
 			case <-mUUIDGen.ClickedCh:
 				uuid, _ := tasks.UUIDGenerate(ctx)
 				clipboard.WriteAll(uuid)
+			case <-mOpen.ClickedCh:
+				self, err := os.Executable()
+				fmt.Println(err)
+				cmd := exec.Command(self, "--ui")
+				err = cmd.Run()
+				fmt.Println(err)
 			case <-mQuit.ClickedCh:
 				systray.Quit()
 				os.Exit(0)

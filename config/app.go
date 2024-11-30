@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/tech-thinker/stikky/models"
+	"github.com/tech-thinker/stikky/utils"
 )
 
 type AppConfig interface {
