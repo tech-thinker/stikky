@@ -8,8 +8,35 @@ import (
 	"encoding/pem"
 	"errors"
 	"fmt"
-	"log"
 )
+
+// GenerateKeyPair generates an RSA private and public key pair
+func GenerateKeyPair(bits int) (string, string, error) {
+	// Generate private key
+	privateKey, err := rsa.GenerateKey(rand.Reader, bits)
+	if err != nil {
+		return "", "", fmt.Errorf("failed to generate private key: %w", err)
+	}
+
+	// Encode private key to PEM format
+	privateKeyPEM := pem.EncodeToMemory(&pem.Block{
+		Type:  "RSA PRIVATE KEY",
+		Bytes: x509.MarshalPKCS1PrivateKey(privateKey),
+	})
+
+	// Encode public key to PEM format
+	publicKeyBytes, err := x509.MarshalPKIXPublicKey(&privateKey.PublicKey)
+	if err != nil {
+		return "", "", fmt.Errorf("failed to marshal public key: %w", err)
+	}
+
+	publicKeyPEM := pem.EncodeToMemory(&pem.Block{
+		Type:  "PUBLIC KEY",
+		Bytes: publicKeyBytes,
+	})
+
+	return string(privateKeyPEM), string(publicKeyPEM), nil
+}
 
 func LoadPrivateKeyFromString(privateKeyPEM string) (*rsa.PrivateKey, error) {
 	// Decode the PEM block
@@ -65,7 +92,7 @@ func LoadPublicKeyFromString(publicKeyPEM string) (*rsa.PublicKey, error) {
 func EncryptWithPublicKey(message string, pub *rsa.PublicKey) string {
 	encryptedBytes, err := rsa.EncryptPKCS1v15(rand.Reader, pub, []byte(message))
 	if err != nil {
-		log.Fatalf("failed to encrypt message: %v", err)
+		fmt.Println("failed to encrypt message:", err)
 	}
 	// Convert encrypted data to base64 for easier handling
 	return base64.StdEncoding.EncodeToString(encryptedBytes)
@@ -76,12 +103,12 @@ func DecryptWithPrivateKey(cipherText string, priv *rsa.PrivateKey) string {
 	// Decode the base64 encrypted message
 	encryptedBytes, err := base64.StdEncoding.DecodeString(cipherText)
 	if err != nil {
-		log.Fatalf("failed to decode base64 string: %v", err)
+		fmt.Println("failed to decode base64 string:", err)
 	}
 	// Decrypt the data
 	decryptedBytes, err := rsa.DecryptPKCS1v15(rand.Reader, priv, encryptedBytes)
 	if err != nil {
-		log.Fatalf("failed to decrypt message: %v", err)
+		fmt.Println("failed to decrypt message:", err)
 	}
 	return string(decryptedBytes)
 }

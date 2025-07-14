@@ -9,6 +9,8 @@ import (
 	"gioui.org/op"
 	"gioui.org/widget"
 	"gioui.org/widget/material"
+	"github.com/tech-thinker/stikky/config"
+	"github.com/tech-thinker/stikky/res"
 	"github.com/tech-thinker/stikky/ui/components"
 )
 
@@ -17,7 +19,7 @@ var (
 	quit  = &widget.Clickable{}
 )
 
-func RunWindow() {
+func RunWindow(cfg config.AppConfig) {
 	go func() {
 		dashboard()
 	}()
@@ -34,6 +36,10 @@ func dashboard() {
 	// Create a text editor widget
 	var editor widget.Editor
 	editor.SingleLine = true // Make it a single-line editor
+
+	isMasked := false
+	icon, _ := res.GetIconIco()
+	eyeIcon, _ := widget.NewIcon(icon)
 
 	// Button widget
 	var btn1, btn2 widget.Clickable
@@ -55,7 +61,7 @@ func dashboard() {
 					Spacing: layout.SpaceEnd,
 				}.Layout(gtx,
 					// Text Box
-					layout.Rigid(components.EditorComponent(theme, &editor, "Type here...")),
+					layout.Rigid(components.TextFieldComponent(theme, &editor, "Type here...", isMasked)),
 
 					// Spacer
 					layout.Rigid(components.VerticalSpacer(theme)),
@@ -66,14 +72,16 @@ func dashboard() {
 							Axis:    layout.Horizontal, // Arrange items horizontally
 							Spacing: layout.SpaceEnd,
 						}.Layout(gtx,
-							layout.Rigid(components.ButtonComponent(theme, &btn1, "Click me 1", func() {
+							layout.Rigid(components.ButtonComponent(theme, &btn1, "Hide", func() {
 								data := editor.Text()
 								fmt.Println("Button clicked! Text 1:", data)
+								isMasked = true
 							})),
 							layout.Rigid(components.HorizontalSpacer(theme)),
-							layout.Rigid(components.ButtonComponent(theme, &btn2, "Click me 2", func() {
+							layout.Rigid(components.ImageButtonComponent(theme, &btn2, eyeIcon, "Show", func() {
 								data := editor.Text()
 								fmt.Println("Button clicked! Text 2:", data)
+								isMasked = false
 							})),
 						)
 					}),

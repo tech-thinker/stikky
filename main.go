@@ -3,10 +3,13 @@ package main
 import (
 	"os"
 
+	"github.com/tech-thinker/stikky/config"
 	"github.com/tech-thinker/stikky/ui"
 )
 
 func main() {
+	cfg := config.NewAppConfig()
+
 	isFirstTime := false
 	args := os.Args
 	uiMode := false
@@ -20,8 +23,8 @@ func main() {
 	}
 
 	if uiMode {
-		ui.RunWindow()
+		ui.RunWindow(cfg)
 	} else {
-		ui.RunSystray()
+		ui.RunSystray(cfg)
 	}
 }

@@ -15,9 +15,17 @@ import (
 	"github.com/tech-thinker/stikky/tasks"
 )
 
-func OnReady() {
-	cfg := config.NewAppConfig()
-	tasks := tasks.NewTask(cfg)
+type SystemTry interface {
+	OnReady()
+	OnExit()
+}
+
+type systemTry struct {
+	cfg config.AppConfig
+}
+
+func (s *systemTry) OnReady() {
+	tasks := tasks.NewTask(s.cfg)
 	ctx := context.Background()
 
 	// Set the tray icon
@@ -109,7 +117,15 @@ func OnReady() {
 	}()
 }
 
-func OnExit() {
+func (*systemTry) OnExit() {
 	// Cleanup logic when the tray icon is removed
 	println("Systray exiting...")
+}
+
+func NewSystemTry(
+	cfg config.AppConfig,
+) SystemTry {
+	return &systemTry{
+		cfg: cfg,
+	}
 }

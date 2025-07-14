@@ -6,8 +6,9 @@ import (
 	"gioui.org/widget/material"
 )
 
-// EditorComponent renders the text box.
-func EditorComponent(th *material.Theme, editor *widget.Editor, text string) layout.Widget {
+// TextFieldComponent renders the text box.
+func TextFieldComponent(th *material.Theme, editor *widget.Editor, text string, readonly bool) layout.Widget {
+	editor.ReadOnly = readonly
 	return func(gtx layout.Context) layout.Dimensions {
 		return material.Editor(th, editor, text).Layout(gtx)
 	}

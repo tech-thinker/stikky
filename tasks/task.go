@@ -2,7 +2,6 @@ package tasks
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/google/uuid"
 	"github.com/tech-thinker/stikky/config"
@@ -30,20 +29,16 @@ func (*task) Base64Decode(ctx context.Context, encodededText string) (string, er
 }
 
 func (t *task) Encrypt(ctx context.Context, plainText string) (string, error) {
-	fmt.Println("Public Key: ", t.cfg.GetPublicKey())
 	pubKey, err := utils.LoadPublicKeyFromString(t.cfg.GetPublicKey())
 	if err != nil {
-		fmt.Println(err)
 		return "", err
 	}
 	return utils.EncryptWithPublicKey(plainText, pubKey), nil
 }
 
 func (t *task) Decrypt(ctx context.Context, cipherText string) (string, error) {
-	fmt.Println("Private Key: ", t.cfg.GetPrivateKey())
 	pkey, err := utils.LoadPrivateKeyFromString(t.cfg.GetPrivateKey())
 	if err != nil {
-		fmt.Println(err)
 		return "", err
 	}
 	return utils.DecryptWithPrivateKey(cipherText, pkey), nil

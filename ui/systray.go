@@ -2,9 +2,11 @@ package ui
 
 import (
 	"github.com/getlantern/systray"
+	"github.com/tech-thinker/stikky/config"
 	"github.com/tech-thinker/stikky/menu"
 )
 
-func RunSystray() {
-	systray.Run(menu.OnReady, menu.OnExit)
+func RunSystray(cfg config.AppConfig) {
+	st := menu.NewSystemTry(cfg)
+	systray.Run(st.OnReady, st.OnExit)
 }
