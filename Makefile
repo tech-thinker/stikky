@@ -54,7 +54,7 @@ pkg-macos_amd64: build-macos-amd64
 	cp res/pkg/macos/VolumeIcon.icns build/macos/.VolumeIcon.icns
 	cp -r res/pkg/macos/background build/macos/.background
 	cp -r res/pkg/macos/fseventsd build/macos/.fseventsd
-	hdiutil create -volname "Stikky Installer" -srcfolder build/macos/ -ov -format UDZO build/Stikky_amd64.dmg
+	hdiutil create -volname "Stikky Installer" -srcfolder build/macos/ -ov -format UDZO build/Stikky-amd64.dmg
 	rm -rf build/macos
 
 
@@ -74,7 +74,7 @@ pkg-macos_arm64: build-macos-arm64
 	cp res/pkg/macos/VolumeIcon.icns build/macos/.VolumeIcon.icns
 	cp -r res/pkg/macos/background build/macos/.background
 	cp -r res/pkg/macos/fseventsd build/macos/.fseventsd
-	hdiutil create -volname "Stikky Installer" -srcfolder build/macos/ -ov -format UDZO build/Stikky_arm64.dmg
+	hdiutil create -volname "Stikky Installer" -srcfolder build/macos/ -ov -format UDZO build/Stikky-arm64.dmg
 	rm -rf build/macos
 
 # Packaging Windows
