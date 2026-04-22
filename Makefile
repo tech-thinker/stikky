@@ -102,3 +102,6 @@ generate-icns:
 	magick res/assets/icon.png -resize 256x256 res/assets/icon.iconset/icon_256x256.png
 	iconutil -c icns res/assets/icon.iconset/
 	rm -rf res/assets/icon.iconset
+
+install_sqlc:
+	go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest

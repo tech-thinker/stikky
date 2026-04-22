@@ -1,0 +1,11 @@
+CREATE TABLE IF NOT EXISTS stikky (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    rsa_private_key TEXT NOT NULL,
+    rsa_public_key TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS public_keys (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name VARCHAR(30) NOT NULL,
+    public_key TEXT NOT NULL
+);

@@ -1,30 +1,25 @@
 package main
 
 import (
-	"os"
-
-	"github.com/tech-thinker/stikky/config"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/app"
+	"github.com/tech-thinker/stikky/res"
 	"github.com/tech-thinker/stikky/ui"
 )
 
 func main() {
-	cfg := config.NewAppConfig()
+	// cfg := config.NewAppConfig()
 
-	isFirstTime := false
-	args := os.Args
-	uiMode := false
-
-	if len(args) >= 2 {
-		uiMode = args[1] == "--ui"
+	a := app.New()
+	icon, err := res.GetIcon()
+	if err != nil {
+		panic(err)
 	}
+	a.SetIcon(fyne.NewStaticResource("icon", icon))
+	screen := ui.NewDashboard(a)
+	w := screen.GetWindow()
+	w.SetIcon(fyne.NewStaticResource("icon", icon))
+	w.Show()
 
-	if isFirstTime {
-		uiMode = true
-	}
-
-	if uiMode {
-		ui.RunWindow(cfg)
-	} else {
-		ui.RunSystray(cfg)
-	}
+	a.Run()
 }
